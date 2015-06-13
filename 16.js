@@ -22,102 +22,111 @@ function clickNum(e) {//点击数字
   if (targetEleJQ.hasClass("undraggable")) {
     return;
   }
-  $(document).bind("mousemove", moveNum);
+  $(document).bind("mousemove", moveIt);
   $(document).bind("mouseup", mouseUp);
 
-  function moveNum(e2) {//移动数字
+  function moveIt(e2) {//移动
     var newX = e2.clientX - oriX,
       newY = e2.clientY - oriY,
       maxX = 400 - targetEle.offsetWidth - 10,
       maxY = 400 - targetEle.offsetHeight - 10;
-
-    if (targetEleJQ.hasClass("group1")) {
-      $(".group1").each(function(index, el) {
-        //this.style.left = newX + index*100 + "px";
-        this.style.top = newY + "px";
-      });
-    }
-    else if (targetEleJQ.hasClass("group2")) {
-      $(".group2").each(function(index, el) {
-        this.style.left = newX + "px";
-        //this.style.top = newY + index*100 + "px";
-      });
-    }
-    else{
-      if (newX < 0) {
-        newX = 0;
+      if (newX < 100) {
+        newX = 100;
       } else if (newX > maxX) {
         newX = maxX;
       }
-      if (newY < 0) {
-        newY = 0;
+      if (newY < 100) {
+        newY = 100;
       } else if (newY > maxY) {
         newY = maxY;
       }
-      targetEle.style.left = newX + "px";
-      targetEle.style.top = newY + "px";
-  }
+      if(targetEleJQ.hasClass("num")){//如果是数字
+        targetEle.style.left = newX + "px";
+        targetEle.style.top = newY + "px";
+      }
+      else if(targetEleJQ.hasClass("group1")){//如果是ABC栏
+        targetEle.style.left = newX + "px";
+        //targetEle.style.top = newY + "px";
+      }
+      else if(targetEleJQ.hasClass("group2")){//如果是XYZ栏
+        //targetEle.style.left = newX + "px";
+        targetEle.style.top = newY + "px";
+      }
   }
 
   function mouseUp(e3) {
     var boxLocX = Math.floor(e3.clientY/100),//放下光标时，所在的方格坐标
           boxLocY = Math.floor(e3.clientX/100),
           oriBoxLocX = parseInt(targetEle.id.substr(4,1)),//原来的方格坐标
-          oriBoxLocY = parseInt(targetEle.id.substr(6,1));
+          oriBoxLocY = parseInt(targetEle.id.substr(6,1)),
+          boxNow = "box-" + boxLocX + "-" + boxLocY,//放下处的盒子id
+          boxOri = "box-" + oriBoxLocX + "-" + oriBoxLocY;
+
     if(targetEleJQ.hasClass("group1")) {
-      //oriBoxLocY = parseInt($(".group1Head").attr("id").substr(6,1));
-      $(".group1").each(function(index, el) {
-        var boxNow = "box-" + boxLocX + "-" + (index + boxLocY),//放下处的盒子id
-        boxOri = "box-" + oriBoxLocX + "-" + (index + oriBoxLocY);
-        $("#" + boxNow).animate({//调换位置
-          left: (index + oriBoxLocY) * 100,
-          top: oriBoxLocX * 100},
-          150*(index + 1),function  () {
-            $("#" + boxNow).attr("id", boxOri);//交换id
-          });
-        $("#" + boxOri).animate({//调换位置
-          left: (index + boxLocY) * 100,
-          top: boxLocX * 100},
-          150*(index + 1),function  () {
-            $("#" + boxOri).attr("id", boxNow);//交换id
-          });
-      });
+      if(!$("#" + boxNow).hasClass("letter")){//点击的是字母而释放的是非字母
+        $(document).unbind("mousemove", moveIt);
+        $(document).unbind("mouseup", mouseUp);
+        resetLoc(boxOri);
+        return; 
+      }
+      changeLoc(boxNow, boxOri);
+      for(var i = 1; i < 4; i++){
+        boxLocX ++;
+        oriBoxLocX ++;
+        boxNow = "box-" + boxLocX + "-" + boxLocY;//放下处的盒子id
+        boxOri = "box-" + oriBoxLocX + "-" + oriBoxLocY;
+        changeLoc(boxNow, boxOri);
+      }
     }
     else if (targetEleJQ.hasClass("group2")) {
-      $(".group2").each(function(index, el) {
-        var boxNow = "box-" + (index + boxLocX) + "-" +  boxLocY,//放下处的盒子id
-        boxOri = "box-" + (index + oriBoxLocX) + "-" + oriBoxLocY;
-        $("#" + boxNow).animate({//调换位置
-          left: oriBoxLocY * 100,
-          top: (index + oriBoxLocX) * 100},
-          150*(index + 1),function  () {
-            $("#" + boxNow).attr("id", boxOri);//交换id
-          });
-        $("#" + boxOri).animate({//调换位置
-          left: boxLocY * 100,
-          top: (index + boxLocX) * 100},
-          150*(index + 1),function  () {
-            $("#" + boxOri).attr("id", boxNow);//交换id
-          });
-      });
+      if(!$("#" + boxNow).hasClass("letter")){//点击的是字母而释放的是非字母
+        $(document).unbind("mousemove", moveIt);
+        $(document).unbind("mouseup", mouseUp);
+        resetLoc(boxOri);
+        return; 
+      }
+      changeLoc(boxNow, boxOri);
+      for(var j = 1; j < 4; j++){
+        boxLocY ++;
+        oriBoxLocY ++;
+        boxNow = "box-" + boxLocX + "-" + boxLocY;//放下处的盒子id
+        boxOri = "box-" + oriBoxLocX + "-" + oriBoxLocY;
+        changeLoc(boxNow, boxOri);
+      }
     }
     else{
-      var boxNow = "box-" + boxLocX + "-" + boxLocY,//放下处的盒子id
-      boxOri = "box-" + oriBoxLocX + "-" + oriBoxLocY;
-      $("#" + boxNow).animate({//调换位置
+      if(!$("#" + boxNow).hasClass("num")){
+        $(document).unbind("mousemove", moveIt);
+        $(document).unbind("mouseup", mouseUp);
+        resetLoc(boxOri);
+        return; 
+      }
+      changeLoc(boxNow, boxOri);
+    }
+    $(document).unbind("mousemove", moveIt);
+    $(document).unbind("mouseup", mouseUp);
+    function changeLoc (boxNow, boxOri) {
+      var boxNowJQ = $("#" + boxNow),
+            boxOriJQ = $("#" + boxOri);
+      boxNowJQ.animate({//调换位置
         left: oriBoxLocY * 100,
         top: oriBoxLocX * 100},
         150,function  () {
-          $("#" + boxNow).attr("id", boxOri);//交换id
+          boxNowJQ.attr("id", boxOri);//交换id
         });
-      targetEleJQ.animate({//调换位置
+      boxOriJQ.animate({//调换位置
         left: boxLocY * 100,
         top: boxLocX * 100},
         150,function  () {
-          targetEleJQ.attr("id", boxNow);//交换id
+          boxOriJQ.attr("id", boxNow);//交换id
         });
     }
-    $(document).unbind("mousemove", moveNum);
-    $(document).unbind("mouseup", mouseUp);
+    function resetLoc (boxOri) {
+      var  boxOriJQ = $("#" + boxOri);
+      boxOriJQ.animate({//回归位置
+        left: oriBoxLocY * 100,
+        top: oriBoxLocX * 100},
+        150);
+    }
   }
 }
