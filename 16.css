@@ -1,0 +1,28 @@
+/*reset*/
+body, div {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/*外层容器*/
+#container {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  background: #eee;
+}
+
+
+/*内部方块*/
+.box {
+  float: left;
+  width: 70px;
+  height: 70px;
+  margin: 5px;
+  font-weight: bold;
+  line-height: 70px;
+  text-align: center;
+  border: 10px solid red;
+  border-radius: 10px;
+}
