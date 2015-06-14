@@ -63,9 +63,7 @@ function clickNum(e) {//点击数字
           boxOri = "box-" + oriBoxLocX + "-" + oriBoxLocY;
 
     if(targetEleJQ.hasClass("group1")) {
-      if(!$("#" + boxNow).hasClass("letter")){//点击的是字母而释放的是非字母
-        $(document).unbind("mousemove", moveIt);
-        $(document).unbind("mouseup", mouseUp);
+      if(!$("#" + boxNow).hasClass("letter") || $("#" + boxNow).hasClass("group2")){//点击的是字母而释放的是非字母
         resetLoc(boxOri);
         return; 
       }
@@ -79,9 +77,7 @@ function clickNum(e) {//点击数字
       }
     }
     else if (targetEleJQ.hasClass("group2")) {
-      if(!$("#" + boxNow).hasClass("letter")){//点击的是字母而释放的是非字母
-        $(document).unbind("mousemove", moveIt);
-        $(document).unbind("mouseup", mouseUp);
+      if(!$("#" + boxNow).hasClass("letter")  || $("#" + boxNow).hasClass("group1")){//点击的是字母而释放的是非字母
         resetLoc(boxOri);
         return; 
       }
@@ -96,8 +92,6 @@ function clickNum(e) {//点击数字
     }
     else{
       if(!$("#" + boxNow).hasClass("num")){
-        $(document).unbind("mousemove", moveIt);
-        $(document).unbind("mouseup", mouseUp);
         resetLoc(boxOri);
         return; 
       }
@@ -123,6 +117,8 @@ function clickNum(e) {//点击数字
     }
     function resetLoc (boxOri) {
       var  boxOriJQ = $("#" + boxOri);
+      $(document).unbind("mousemove", moveIt);
+      $(document).unbind("mouseup", mouseUp);
       boxOriJQ.animate({//回归位置
         left: oriBoxLocY * 100,
         top: oriBoxLocX * 100},
